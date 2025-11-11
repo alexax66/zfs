@@ -212,6 +212,19 @@
 /* not all LoongArch cores support unaligned accesses in hardware */
 #define	_ALIGNMENT_REQUIRED	1
 
+/*
+ * E2K arch specific defines
+ * Very experimental!!!
+ */
+#elif defined(__e2k__)
+
+#if !defined(_LP64)
+#define	_LP64
+#endif
+
+#define	_ZFS_LITTLE_ENDIAN
+#define	_SUNOS_VTOC_16
+
 #else
 /*
  * Currently supported:
