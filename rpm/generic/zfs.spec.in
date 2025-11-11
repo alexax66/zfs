@@ -1,3 +1,8 @@
+%if ! 0%{?rhel}%{?fedora}%{?mageia}%{?suse_version}%{?openEuler}
+%define bcond_with() %{expand:%%{?_with_%{1}:%%global with_%{1} 1}}
+%define bcond_without() %{expand:%%{!?_without_%{1}:%%global with_%{1} 1}}
+%endif
+
 %global _sbindir    /sbin
 %global _libdir     /%{_lib}
 
@@ -110,7 +115,7 @@ Group:          System Environment/Kernel
 License:        @ZFS_META_LICENSE@
 URL:            https://github.com/openzfs/zfs
 Source0:        %{name}-%{version}.tar.gz
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id} -u -n)
 Requires:       libzpool6%{?_isa} = %{version}-%{release}
 Requires:       libnvpair3%{?_isa} = %{version}-%{release}
 Requires:       libuutil3%{?_isa} = %{version}-%{release}
@@ -461,15 +466,6 @@ if [ -x /sbin/chkconfig ]; then
 fi
 %endif
 exit 0
-
-# On RHEL/CentOS 7 the static nodes aren't refreshed by default after
-# installing a package.  This is the default behavior for Fedora.
-%posttrans
-%if 0%{?rhel} == 7 || 0%{?centos} == 7
-systemctl restart kmod-static-nodes
-systemctl restart systemd-tmpfiles-setup-dev
-udevadm trigger
-%endif
 
 %preun
 %if 0%{?_systemd}
